@@ -1,0 +1,46 @@
+@page "/"
+@inject HttpClient HttpClient
+
+<div class="master-view-container column">
+    <div class="group row">
+        <IgbDataGrid DataSource="northwindRestCustomers" AutoGenerateColumns="false" Density="ControlDisplayDensity.Cosy" SelectionMode="GridSelectionMode.None" Width="100%" Height="100%" class="grid" master-view-scope>
+            <IgbTextColumn HeaderText="CustomerID" Field="CustomerID" IsResizingEnabled="true" IsFilteringEnabled="true"></IgbTextColumn>
+            <IgbTextColumn HeaderText="CompanyName" Field="CompanyName" IsResizingEnabled="true" IsFilteringEnabled="true"></IgbTextColumn>
+            <IgbTextColumn HeaderText="ContactName" Field="ContactName" IsResizingEnabled="true" IsFilteringEnabled="true"></IgbTextColumn>
+            <IgbTextColumn HeaderText="ContactTitle" Field="ContactTitle" IsResizingEnabled="true" IsFilteringEnabled="true"></IgbTextColumn>
+            <IgbTextColumn HeaderText="Address" Field="Address" IsResizingEnabled="true" IsFilteringEnabled="true"></IgbTextColumn>
+            <IgbTextColumn HeaderText="City" Field="City" IsResizingEnabled="true" IsFilteringEnabled="true"></IgbTextColumn>
+            <IgbTextColumn HeaderText="Region" Field="Region" IsResizingEnabled="true" IsFilteringEnabled="true"></IgbTextColumn>
+            <IgbTextColumn HeaderText="Country" Field="Country" IsResizingEnabled="true" IsFilteringEnabled="true"></IgbTextColumn>
+            <IgbTextColumn HeaderText="Phone" Field="Phone" IsResizingEnabled="true" IsFilteringEnabled="true"></IgbTextColumn>
+            <IgbTextColumn HeaderText="Fax" Field="Fax" IsResizingEnabled="true" IsFilteringEnabled="true"></IgbTextColumn>
+        </IgbDataGrid>
+    </div>
+    <div class="group row">
+        <IgbDataGrid DataSource="northwindRestOrders" AutoGenerateColumns="false" Density="ControlDisplayDensity.Cosy" SelectionMode="GridSelectionMode.None" Width="100%" Height="100%" class="grid" master-view-scope>
+            <IgbTextColumn HeaderText="OrderID" Field="OrderID" IsFilteringEnabled="true"></IgbTextColumn>
+            <IgbTextColumn HeaderText="CustomerID" Field="CustomerID" IsFilteringEnabled="true"></IgbTextColumn>
+            <IgbTextColumn HeaderText="EmployeeID" Field="EmployeeID" IsFilteringEnabled="true"></IgbTextColumn>
+            <IgbTextColumn HeaderText="OrderDate" Field="OrderDate" IsFilteringEnabled="true"></IgbTextColumn>
+            <IgbTextColumn HeaderText="RequiredDate" Field="RequiredDate" IsFilteringEnabled="true"></IgbTextColumn>
+            <IgbTextColumn HeaderText="ShipVia" Field="ShipVia" IsFilteringEnabled="true"></IgbTextColumn>
+            <IgbTextColumn HeaderText="Freight" Field="Freight" IsFilteringEnabled="true"></IgbTextColumn>
+            <IgbTextColumn HeaderText="ShipName" Field="ShipName" IsFilteringEnabled="true"></IgbTextColumn>
+            <IgbTextColumn HeaderText="ShipAddress" Field="ShipAddress" IsFilteringEnabled="true"></IgbTextColumn>
+            <IgbTextColumn HeaderText="ShipCity" Field="ShipCity" IsFilteringEnabled="true"></IgbTextColumn>
+            <IgbTextColumn HeaderText="ShipRegion" Field="ShipRegion" IsFilteringEnabled="true"></IgbTextColumn>
+            <IgbTextColumn HeaderText="ShipCountry" Field="ShipCountry" IsFilteringEnabled="true"></IgbTextColumn>
+        </IgbDataGrid>
+    </div>
+</div>
+
+@code {
+    private NorthwindRest.CustomersType[] northwindRestCustomers = Array.Empty<NorthwindRest.CustomersType>();
+    private NorthwindRest.OrdersType[] northwindRestOrders = Array.Empty<NorthwindRest.OrdersType>();
+
+    protected override async Task OnInitializedAsync()
+    {
+        northwindRestCustomers = await HttpClient.GetFromJsonAsync<NorthwindRest.CustomersType[]>("https://excel2json.io/api/share/dcb51ae600934ecf93c02c9ffcda3c6f") ?? northwindRestCustomers;
+        northwindRestOrders = await HttpClient.GetFromJsonAsync<NorthwindRest.OrdersType[]>("https://excel2json.io/api/share/de91435ece444635a9768cc507d82cd4") ?? northwindRestOrders;
+    }
+}
