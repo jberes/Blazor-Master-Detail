@@ -1,9 +1,12 @@
 @page "/"
+@using System.Text.Json
+@using System.Text.Json.Serialization
 @inject HttpClient HttpClient
 
 <div class="master-view-container column">
     <div class="group row">
-        <IgbDataGrid DataSource="northwindRestCustomers" AutoGenerateColumns="false" Density="ControlDisplayDensity.Cosy" SelectionMode="GridSelectionMode.None" Width="100%" Height="100%" class="grid" master-view-scope>
+        <IgbDataGrid DataSource="northwindRestCustomers" AutoGenerateColumns="false" Density="ControlDisplayDensity.Cosy" SelectionMode="GridSelectionMode.SingleRow" Width="100%" Height="480px" class="grid" master-view-scope
+                     SelectedItemsChanged="@((a) => SelectedItemsChanged(a))">
             <IgbTextColumn HeaderText="CustomerID" Field="CustomerID" IsResizingEnabled="true" IsFilteringEnabled="true"></IgbTextColumn>
             <IgbTextColumn HeaderText="CompanyName" Field="CompanyName" IsResizingEnabled="true" IsFilteringEnabled="true"></IgbTextColumn>
             <IgbTextColumn HeaderText="ContactName" Field="ContactName" IsResizingEnabled="true" IsFilteringEnabled="true"></IgbTextColumn>
@@ -17,12 +20,12 @@
         </IgbDataGrid>
     </div>
     <div class="group row">
-        <IgbDataGrid DataSource="northwindRestOrders" AutoGenerateColumns="false" Density="ControlDisplayDensity.Cosy" SelectionMode="GridSelectionMode.None" Width="100%" Height="100%" class="grid" master-view-scope>
-            <IgbTextColumn HeaderText="OrderID" Field="OrderID" IsFilteringEnabled="true"></IgbTextColumn>
+        <IgbDataGrid DataSource="northwindRestOrders" AutoGenerateColumns="false" Density="ControlDisplayDensity.Cosy" SelectionMode="GridSelectionMode.None" Width="100%" Height="480px" class="grid" master-view-scope>
+            <IgbNumericColumn HeaderText="OrderID" Field="OrderID" IsFilteringEnabled="true"></IgbNumericColumn>
             <IgbTextColumn HeaderText="CustomerID" Field="CustomerID" IsFilteringEnabled="true"></IgbTextColumn>
             <IgbTextColumn HeaderText="EmployeeID" Field="EmployeeID" IsFilteringEnabled="true"></IgbTextColumn>
-            <IgbTextColumn HeaderText="OrderDate" Field="OrderDate" IsFilteringEnabled="true"></IgbTextColumn>
-            <IgbTextColumn HeaderText="RequiredDate" Field="RequiredDate" IsFilteringEnabled="true"></IgbTextColumn>
+            <IgbDateTimeColumn HeaderText="OrderDate" Field="OrderDate" IsFilteringEnabled="true"></IgbDateTimeColumn>
+            <IgbDateTimeColumn HeaderText="RequiredDate" Field="RequiredDate" IsFilteringEnabled="true"></IgbDateTimeColumn>
             <IgbTextColumn HeaderText="ShipVia" Field="ShipVia" IsFilteringEnabled="true"></IgbTextColumn>
             <IgbTextColumn HeaderText="Freight" Field="Freight" IsFilteringEnabled="true"></IgbTextColumn>
             <IgbTextColumn HeaderText="ShipName" Field="ShipName" IsFilteringEnabled="true"></IgbTextColumn>
@@ -36,11 +39,22 @@
 
 @code {
     private NorthwindRest.CustomersType[] northwindRestCustomers = Array.Empty<NorthwindRest.CustomersType>();
-    private NorthwindRest.OrdersType[] northwindRestOrders = Array.Empty<NorthwindRest.OrdersType>();
+    private NorthwindRest.OrdersType[] northwindRestOrdersCache = Array.Empty<NorthwindRest.OrdersType>();
+    private List<NorthwindRest.OrdersType> northwindRestOrders = new List<NorthwindRest.OrdersType>();
 
     protected override async Task OnInitializedAsync()
     {
         northwindRestCustomers = await HttpClient.GetFromJsonAsync<NorthwindRest.CustomersType[]>("https://excel2json.io/api/share/dcb51ae600934ecf93c02c9ffcda3c6f") ?? northwindRestCustomers;
-        northwindRestOrders = await HttpClient.GetFromJsonAsync<NorthwindRest.OrdersType[]>("https://excel2json.io/api/share/de91435ece444635a9768cc507d82cd4") ?? northwindRestOrders;
+        northwindRestOrdersCache = await HttpClient.GetFromJsonAsync<NorthwindRest.OrdersType[]>("https://excel2json.io/api/share/de91435ece444635a9768cc507d82cd4") ?? northwindRestOrdersCache;
+    }
+
+    void SelectedItemsChanged(IgbGridSelectedItemsChangedEventArgs e)
+    {
+        var selectedCustomer = e.AddedItems[0] as NorthwindRest.CustomersType;
+        if (selectedCustomer == null)
+            return;
+
+        northwindRestOrders = northwindRestOrdersCache.Where(x => x.CustomerID == selectedCustomer.CustomerID).ToList();
+        StateHasChanged();
     }
 }
