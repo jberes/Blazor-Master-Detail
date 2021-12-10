@@ -6,7 +6,7 @@
 <div class="master-view-container column">
     <div class="group row">
         <IgbDataGrid DataSource="northwindRestCustomers" AutoGenerateColumns="false" Density="ControlDisplayDensity.Cosy" SelectionMode="GridSelectionMode.SingleRow" Width="100%" Height="480px" class="grid" master-view-scope
-                     SelectedItemsChanged="@((a) => SelectedItemsChanged(a))">
+                     SelectedItemsChanged="SelectedItemsChanged">
             <IgbTextColumn HeaderText="CustomerID" Field="CustomerID" IsResizingEnabled="true" IsFilteringEnabled="true"></IgbTextColumn>
             <IgbTextColumn HeaderText="CompanyName" Field="CompanyName" IsResizingEnabled="true" IsFilteringEnabled="true"></IgbTextColumn>
             <IgbTextColumn HeaderText="ContactName" Field="ContactName" IsResizingEnabled="true" IsFilteringEnabled="true"></IgbTextColumn>
