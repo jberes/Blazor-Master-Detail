@@ -15,6 +15,5 @@ await builder.Build().RunAsync();
 
 void RegisterIgniteUI(IServiceCollection services)
 {
-    services.AddIgniteUIBlazor(typeof(HttpClientModule));
     services.AddIgniteUIBlazor(typeof(IgbDataGridModule));
 }
